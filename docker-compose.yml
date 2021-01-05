@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  frontend:
+    image: nginx-pttchrome
+    build: 
+      context: .
+    ports:
+      - "1280:80"
+  
