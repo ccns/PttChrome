@@ -5,3 +5,5 @@ js/constants_local.js
 dist/*
 !dist/.gitkeep
 .env
+
+sslversion/*
