@@ -8,7 +8,7 @@
     "hammerjs": "^2.0.8",
     "jquery": "^3.5.0",
     "react": "^16.2.0",
-    "react-bootstrap": "^0.31.5",
+    "react-bootstrap": "^1.6.1",
     "react-dom": "^16.2.0",
     "react-overlays": "^0.7.4",
     "recompose": "^0.26.0"
