@@ -1,5 +1,5 @@
 ﻿// Main Program
-import BaseModal from 'react-overlays/lib/Modal';
+import BaseModal from 'react-overlays/Modal';
 import { Fade, Modal } from "react-bootstrap";
 import { AnsiParser } from './ansi_parser';
 import { TermView } from './term_view';
