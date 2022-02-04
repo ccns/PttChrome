@@ -1054,7 +1054,9 @@ TermBuf.prototype = {
     let cols = this.cols;
 
     switch( this.pageState ) {
+    default:
     case 0: //NORMAL
+    case 5: //PASS
       //SetCursor(m_ArrowCursor);
       //m_CursorState = 0;
       this.mouseCursor = 0;
@@ -1149,13 +1151,13 @@ TermBuf.prototype = {
         else
           this.mouseCursor = 1;
       } else {
-        this.mouseCursor = 0;
+        this.mouseCursor = 11;
         //SetCursor(m_ArrowCursor);m_CursorState=0;
       }
       break;
 
-    default:
-      this.mouseCursor = 0;
+    case 6: //EDITING
+      this.mouseCursor = 11;
       break;
     }
 
