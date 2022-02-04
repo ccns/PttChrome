@@ -1061,7 +1061,7 @@ TermBuf.prototype = {
       break;
 
     case 4: //LIST
-      if (trow>1 && trow < lastRowNum-1) {              //m_pTermData->m_RowsPerPage-1
+      if (trow > 2 && trow < lastRowNum) {              //m_pTermData->m_RowsPerPage-1
         if ( tcol <= 6 ) {
           this.clearHighlight();
           this.mouseCursor = 1;
