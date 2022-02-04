@@ -712,6 +712,7 @@ App.prototype.onMouse_click = function (e) {
       this.conn.send('\x1b[D\x1b[4~[]\r'); //Last post with the same title (READING)
       break;
     default:
+    case 11:
       //do nothing
       break;
   }
