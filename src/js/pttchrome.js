@@ -1151,7 +1151,7 @@ App.prototype.setBBSCmd = function setBBSCmd(cmd) {
       if (this.view.useEasyReadingMode && this.buf.startedEasyReading) {
         this.easyReading.leaveCurrentPost();
         this.conn.send('[');
-      } else if (this.buf.pageState==2 || this.buf.pageState==3 || this.buf.pageState==4) {
+      } else if (this.buf.pageState==2 || this.buf.pageState==3) {
         this.conn.send('[');
       }
       break;
@@ -1159,7 +1159,7 @@ App.prototype.setBBSCmd = function setBBSCmd(cmd) {
       if (this.view.useEasyReadingMode && this.buf.startedEasyReading) {
         this.easyReading.leaveCurrentPost();
         this.conn.send(']');
-      } else if (this.buf.pageState==2 || this.buf.pageState==3 || this.buf.pageState==4) {
+      } else if (this.buf.pageState==2 || this.buf.pageState==3) {
         this.conn.send(']');
       }
       break;
