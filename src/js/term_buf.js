@@ -1060,6 +1060,7 @@ TermBuf.prototype = {
       this.mouseCursor = 0;
       break;
 
+    case 2: //LIST (with thread reading keys)
     case 4: //LIST
       if (trow > 2 && trow < lastRowNum) {              //m_pTermData->m_RowsPerPage-1
         if ( tcol <= 6 ) {
@@ -1082,54 +1083,28 @@ TermBuf.prototype = {
         }
       } else if ( trow == 1 || trow == 2 ) {
         this.mouseCursor = 2;
+        if (this.pageState === 2) {
+            if ( tcol < 2 )//[
+              this.mouseCursor = 8;
+            else if ( tcol > cols-5 )//]
+              this.mouseCursor = 9;
+        }
       } else if ( trow === 0 ) {
         this.mouseCursor = 4;
+        if (this.pageState === 2) {
+            if ( tcol < 2 )//=
+              this.mouseCursor = 10;
+            else if ( tcol > cols-5 )//]
+              this.mouseCursor = 9;
+        }
       } else { // if ( trow == 23)
         this.mouseCursor = 5;
-      }
-      break;
-
-    case 2: //LIST
-      if (trow > 2 && trow < lastRowNum) {              //m_pTermData->m_RowsPerPage-1
-        if ( tcol <= 6 ) {
-          this.clearHighlight();
-          this.mouseCursor = 1;
-          //SetCursor(m_ExitCursor);m_CursorState=1;
-        } else if ( tcol >= cols-16 ) {            //m_pTermData->m_ColsPerPage-16
-          this.clearHighlight();
-          if ( trow >  (lastRowNum + 1) / 2 )
-            this.mouseCursor = 3;
-          else
-            this.mouseCursor = 2;
-        } else {
-          if (!this.isLineEmpty(trow)) {
-            this.mouseCursor = 6;
-            this.nowHighlight = trow;
-          } else {
-            this.mouseCursor = 11;
-          }
+        if (this.pageState === 2) {
+            if ( tcol < 2 )
+              this.mouseCursor = 12;
+            else if ( tcol > cols-5 )
+              this.mouseCursor = 13;
         }
-      } else if ( trow == 1 || trow == 2 ) {
-        if ( tcol < 2 )//[
-          this.mouseCursor = 8;
-        else if ( tcol > cols-5 )//]
-          this.mouseCursor = 9;
-        else
-          this.mouseCursor = 2;
-      } else if ( trow === 0 ) {
-        if ( tcol < 2 )//=
-          this.mouseCursor = 10;
-        else if ( tcol > cols-5 )//]
-          this.mouseCursor = 9;
-        else
-          this.mouseCursor = 4;
-      } else { // if ( trow == 23)
-        if ( tcol < 2 )
-          this.mouseCursor = 12;
-        else if ( tcol > cols-5 )
-          this.mouseCursor = 13;
-        else
-          this.mouseCursor = 5;
       }
       break;
 
