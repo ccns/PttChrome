@@ -14,7 +14,7 @@
     "recompose": "^0.30.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
+    "@babel/core": "^7.18.9",
     "@babel/preset-env": "^7.16.5",
     "@babel/preset-react": "^7.16.5",
     "@webpack-cli/serve": "^1.5.2",
