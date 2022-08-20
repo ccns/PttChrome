@@ -248,7 +248,7 @@ App.prototype.onData = function(data) {
 
   if (!this.appFocused && this.view.enableNotifications) {
     // parse received data for waterball
-    var wb = parseWaterball(b2u(data));
+    var wb = parseWaterball(b2u(data), this.buf.rows);
     if (wb) {
       if ('userId' in wb) {
         this.waterball.userId = wb.userId;

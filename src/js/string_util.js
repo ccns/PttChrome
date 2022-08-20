@@ -151,16 +151,16 @@ export function parseListRow(str) {
   return regex.test(str);
 };
 
-export function parseWaterball(str) {
+export function parseWaterball(str, rows) {
   var regex = new RegExp(/\x1b\[1;33;46m\u2605(\w+)\x1b\[0;1;37;45m (.+) \x1b\[m\x1b\[K/g);
   var result = regex.exec(str);
   if (result && result.length == 3) {
     return { userId: result[1], message: result[2] };
   } else {
-    regex = new RegExp(/\x1b\[24;\d{2}H\x1b\[1;37;45m([^\x1b]+)(?:\x1b\[24;18H)?\x1b\[m/g);
+    regex = new RegExp(/\x1b\[(\d+);\d+H\x1b\[1;37;45m([^\x1b]+)(?:\x1b\[\1;18H)?\x1b\[m/g);
     result = regex.exec(str);
-    if (result && result.length == 2) {
-      return { message: result[1] };
+    if (result && result.length == 3 && parseInt(result[1], 10) == rows) {
+      return { message: result[2] };
     }
   }
 
