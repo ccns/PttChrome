@@ -73,8 +73,7 @@ EasyReading.prototype._onChanged = function(e) {
       }
       var result = parseStatusRow(lastRowText);
       if (result) {
-        var lastRowFirstCh = this._termBuf.lines[lastRowNum][0];
-        if (lastRowFirstCh.getBg() == 4 && lastRowFirstCh.getFg() == 7) {
+        if (result.pagePercent == 100) {
           this.easyReadingReachedPageEnd = true;
         } else {
           this.easyReadingReachedPageEnd = false;

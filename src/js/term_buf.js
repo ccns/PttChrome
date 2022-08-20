@@ -979,42 +979,45 @@ TermBuf.prototype = {
     let cols = this.cols;
     //this.pageState = 0; //NORMAL
     var lastRowText = this.getRowText(lastRowNum, 0, cols);
-    if (lastRowText.indexOf('請按任意鍵繼續') > 0 || lastRowText.indexOf('請按 空白鍵 繼續') > 0) {
+    if (lastRowText.search(/請?按 ?(任意|任何|空白|\(Space\/Return\))鍵 ?繼續/) > 0) {
       //console.log('pageState = 5 (PASS)');
       this.pageState = 5; // some ansi drawing screen to pass
       return;
     }
-    if (lastRowText.indexOf(' 編輯文章  (^Z/F1)說明 (^P/^G)插入符號/範本 (^X/^Q)離開') === 0) {
-      this.pageState = 6;
+    if (lastRowText.search(' +編輯文章 +') === 0) {
+      this.pageState = 6; // EDITING
       return;
     }
     if (parseStatusRow(lastRowText)) {
       this.pageState = 3; // READING
       return;
     }
+    this.pageState = 0;
 
     var firstRowText = this.getRowText(0, 0, cols);
 
     if ( this.isUnicolor(0, 0, 29) && this.isUnicolor(0, cols-20, cols-10) ) {
-      var main = firstRowText.indexOf('【主功能表】');
-      var classList = firstRowText.indexOf('【分類看板】');
-      var archiveList = firstRowText.indexOf('【精華文章】');
-      if (main === 0 || classList === 0 || archiveList === 0 ||
-        parseListRow(lastRowText)) {
+      var menuList = firstRowText.search(/^【主功能表】/);
+      if (menuList === 0 || parseListRow(lastRowText)) {
         //console.log('pageState = 1 (MENU)');
         this.pageState = 1; // MENU
       } else if (this.isUnicolor(2, 0, cols-10) && !this.isLineEmpty(1) && (this.cur_x < 19 || this.cur_y == lastRowNum)) {
-        //console.log('pageState = 2 (LIST)');
-        this.pageState = 2; // LIST
+        var postList = firstRowText.search(/^【(?:版|板)主.*】/);
+        var archiveList = firstRowText.search(/^【精華文章】/);
+        var mailList = firstRowText.search(/^【郵件選單】/);
+        if (postList === 0 || archiveList === 0 || mailList === 0) {
+            //console.log('pageState = 2 (LIST)');
+            this.pageState = 2; // LIST (with thread reading keys)
+        } else {
+            this.pageState = 4; // LIST
+        }
       }
     } else if ( this.isUnicolor(lastRowNum, 28, 53) && this.cur_y == lastRowNum && this.cur_x == cols-1) {
       //console.log('pageState = 5 (PASS)');
       this.pageState = 5; // some ansi drawing screen to pass
     }
-    if (this.pageState != 1 && this.isLineEmpty(lastRowNum)) {
-      //console.log('pageState = 0 (NORMAL)');
-      this.pageState = 0;
-    }
+    //if (this.pageState === 0)
+    //  //console.log('pageState = 0 (NORMAL)');
   },
 
   isUnicolor: function(lineindex, start, end){
