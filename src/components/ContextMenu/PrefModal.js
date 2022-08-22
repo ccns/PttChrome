@@ -158,15 +158,23 @@ const enhance = compose(
       }
     }),
     {
-      onCloseClick: ({ values }, { onSave }) => () =>
-        onSave(writeValues(values)),
+      onCloseClick: ({ values }, { onSave }) => event => {
+        if (event) {
+          event.stopPropagation();
+        }
+        onSave(writeValues(values));
+      },
 
-      onResetClick: (state, { onReset }) => () =>
+      onResetClick: (state, { onReset }) => event => {
+        if (event) {
+          event.stopPropagation();
+        }
         onReset(
           writeValues({
             ...DEFAULT_PREFS
           })
-        ),
+        );
+      },
 
       onNavSelect: () => activeKey => ({
         navActiveKey: activeKey
