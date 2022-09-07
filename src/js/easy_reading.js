@@ -178,9 +178,7 @@ EasyReading.prototype._scrollBy = function(lines) {
   var cont = this._view.mainDisplay;
   if (lines < 0 && cont.scrollTop == 0)
     return false;
-  if (lines > 0 && cont.scrollTop >=
-    this._view.mainContainer.clientHeight -
-      this._view.chh * this._termBuf.rows)
+  if (lines > 0 && cont.scrollTop >= cont.scrollHeight - cont.clientHeight - 1)
     return false;
   cont.scrollTop += this._view.chh * lines;
   return true;
