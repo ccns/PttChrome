@@ -965,7 +965,7 @@ TermBuf.prototype = {
     var slashIndex = rowText.lastIndexOf('\\');
     if (slashIndex > 0 ) {
       var col = u2b(rowText.substr(0, slashIndex)).length;
-      if (col != 77 && col != 78) return false;
+      if (col < this.cols - 3) return false;
       // check the color
       var ch = this.lines[row][col];
       if (ch.fg == 7 && ch.bg === 0 && ch.bright)
