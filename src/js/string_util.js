@@ -122,7 +122,7 @@ export function parseReplyText(it) {
 
 export function parsePushInitText(it) {
   return (it.indexOf('您覺得這篇文章 ') === 0 || 
-      it.indexOf('◎ *評論') === 0 ||
+      it.search(/◎ *評論/) === 0 ||
       it.search(/→ \w+ *: +/) === 0 ||
       it.search(/.+：/) === 0 ||
       it.indexOf('很抱歉, 本板不開放回覆文章，要改回信給作者嗎？ [y/N]:') === 0);
