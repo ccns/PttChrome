@@ -745,71 +745,82 @@ TermView.prototype = {
   },
 
   populateEasyReadingPage: function() {
-    if (this.buf.pageState == 3 && this.buf.prevPageState == 3) {
-      this.mainContainer.style.paddingBottom = '1em';
+    if (this.buf.prevPageState != 3 || this.buf.pageState != 3) {
+      // reset states
+      this.actualRowIndex = 0; // 1-indexed
+      this.buf.pageWrappedLines = [];
+      this.buf.pageLines = [];
+    }
+    if (this.buf.pageState == 3) {
+      // handle layout changes
+      if (this.buf.prevPageState != 3) {
+        // initialize easy reading UI
+        this.mainContainer.style.paddingBottom = '1em';
+        this.clearRows();
+        this.lastRowDiv.innerHTML = this.lastRowDivContent;
+        this.lastRowDiv.style.display = 'block';
+      }
+
       var lastRowText = this.buf.getRowText(this.buf.rows-1, 0, this.buf.cols);
       var result = parseStatusRow(lastRowText);
-      if (result) {
-        // row index start with 4 or below will cause duplicated first row of next page
-        // 2015-07-04: better way is to view the row 3 and row 4 as one wrapped line
-        /*
-        if (result.rowIndexStart < 5) {
-          result.rowIndexStart -= 1;
-        }
-        */
-        var rowOffset = this.buf.pageLines.length-1;
-        var beginIndex = 1;
-        var atLastPage = false;
-        if ((result.pageIndex == result.pageTotal && result.pagePercent == 100) || 
-            result.rowIndexStart != this.actualRowIndex) { // at last page
-          atLastPage = result.rowIndexStart != this.actualRowIndex;
-          // find num of rows between actualRowIndex and rowIndexStart
+      if (this.actualRowIndex == 0 || result) {
+        // find new rows from the screen buffer
+        var beginIndex = 0;
+        if (this.actualRowIndex != 0 && result) {
+          // skip already loaded rows from rowIndexStart to actualRowIndex
+          // in case the line starting at rowIndexStart were truncated or the last page is reached
           var numRows = 0;
-          for (var i = result.rowIndexStart; i < this.actualRowIndex + 1; ++i) {
+          for (var i = result.rowIndexStart; i <= this.actualRowIndex; ++i) {
             numRows += this.buf.pageWrappedLines[i];
           }
           beginIndex = numRows;
-          rowOffset -= beginIndex-1;
         }
 
-        for (var i = beginIndex; i < this.buf.rows-1; ++i) {
+        // find wrapped rows of each displayed line
+        // FIXME: This only works for `\`-autowrapped texts,
+        // which requires enabling both the following pmore options:
+        // "斷行方式: 自動斷行" ("Text Overflow Handling: Auto Wrapping")
+        // and "斷行符號: 顯示" ("Text Overflow Marks: Displayed")
+        // FIXME: Very long lines which do not fit into the screen are not handled.
+        var endIndex = -1;
+        for (var i = beginIndex; i < this.buf.rows - 1; ++i) {
           if (i > 0 && this.buf.isTextWrappedRow(i-1)) {
             this.buf.pageWrappedLines[this.actualRowIndex] += 1;
-            // if the second row is the wrapped line from first row 
-            if (!atLastPage && i == beginIndex) {
-              beginIndex++;
-            }
           } else {
+            if (this.actualRowIndex >= result.rowIndexEnd) {
+              // skip extra empty lines at article end
+              endIndex = i;
+              break;
+            }
             this.buf.pageWrappedLines[++this.actualRowIndex] = 1;
           }
         }
-        this.appendRows(this.buf.lines.slice(beginIndex, -1), true);
-        // deep clone lines for selection (getRowText and get ansi color)
-        this.buf.pageLines = this.buf.pageLines.concat(JSON.parse(JSON.stringify(this.buf.lines.slice(beginIndex, -1))));
+
+        // row index start with 4 or below will cause duplicated first row of next page
+        // 2015-07-04: better way is to view the row 3 and row 4 as one wrapped line
+
+        // check whether the assumed line "No.5" is a wrapped row of line No.4,
+        // which happens when the article header presents and the following pmore option is enabled:
+        // "文章標頭分隔線: 傳統分隔線加空行" ("Article Header Ruler: Traditional Ruler Followed by an Empty Line")
+        if ((result && result.rowIndexStart <= 4 && result.rowIndexEnd > 4) &&
+            result.rowIndexEnd - result.rowIndexStart + 1 < this.actualRowIndex) {
+          this.buf.pageWrappedLines = [].concat(
+            this.buf.pageWrappedLines.slice(0, 4),
+            this.buf.pageWrappedLines[4] + this.buf.pageWrappedLines[5],
+            this.buf.pageWrappedLines.slice(6)
+          );
+          --this.actualRowIndex;
+        }
+
+        // load the new rows onto the easy reading screen
+        var lines = this.buf.lines.slice(beginIndex, endIndex);
+        this.appendRows(lines, true);
+        // clone rows for selection (getRowText and get ansi color)
+        this.buf.pageLines = this.buf.pageLines.concat(JSON.parse(JSON.stringify(lines)));
       }
       this.buf.prevPageState = 3;
     } else {
-      this.mainContainer.style.paddingBottom = '';
-      this.actualRowIndex = 0;
-      this.buf.pageWrappedLines = [];
-      if (this.buf.pageState == 3) {
-        var lastRowText = this.buf.getRowText(this.buf.rows-1, 0, this.buf.cols);
-        for (var i = 0; i < this.buf.rows-1; ++i) {
-          if (i == 4 || i > 0 && this.buf.isTextWrappedRow(i-1)) { // row with i == 4 and the i == 3 is the wrapped line
-            this.buf.pageWrappedLines[this.actualRowIndex] += 1;
-          } else {
-            this.buf.pageWrappedLines[++this.actualRowIndex] = 1;
-          }
-        }
-        this.clearRows();
-        this.appendRows(this.buf.lines.slice(0, -1), true);
-        this.lastRowDiv.innerHTML = this.lastRowDivContent;
-        this.lastRowDiv.style.display = 'block';
-        // deep clone lines for selection (getRowText and get ansi color)
-        this.buf.pageLines = this.buf.pageLines.concat(JSON.parse(JSON.stringify(this.buf.lines.slice(0, -1))));
-      } else {
-        this.hideEasyReading();
-      }
+      this.hideEasyReading();
       this.buf.prevPageState = this.buf.pageState;
     }
   },
