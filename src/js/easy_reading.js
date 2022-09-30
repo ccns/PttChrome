@@ -13,9 +13,7 @@ export function EasyReading(core, view, termBuf) {
 
   this._turnPageLines = 22;
 
-  this.easyReadingReachedPageEnd = false;
-  this.sendCommandAfterUpdate = '';
-  this.ignoreOneUpdate = false;
+  this.reset();
 
   function bindProperty(target, name, obj, prop) {
     if (!prop) prop = name;
@@ -31,6 +29,17 @@ export function EasyReading(core, view, termBuf) {
 
   this._termBuf.addEventListener('change', this._onChanged.bind(this));
   this._termBuf.addEventListener('viewUpdate', this._onViewUpdated.bind(this));
+};
+
+EasyReading.prototype.reset = function(e) {
+  this.easyReadingShowReplyText = false;
+  this.easyReadingShowPushInitText = false;
+  this.startedEasyReading = false;
+  this.easyReadingReachedPageEnd = false;
+  this.sendCommandAfterUpdate = '';
+  this.ignoreOneUpdate = false;
+  this.lastCurY = -1;
+  this.lastCurX = -1;
 };
 
 EasyReading.prototype._onChanged = function(e) {
@@ -54,14 +63,11 @@ EasyReading.prototype._onChanged = function(e) {
   let lastColNum = this._termBuf.cols - 1;
   let lastRowNum = this._termBuf.rows - 1;
   var lastRowText = this._termBuf.getRowText(lastRowNum, 0, this._termBuf.cols);
-  // dealing with page state jump to 0 because last row wasn't updated fully 
   if (this._termBuf.pageState == 3) {
     this.startedEasyReading = true;
   } else if (this.startedEasyReading && parseReqNotMetText(lastRowText)) {
     this.easyReadingShowPushInitText = true;
-  } else {
-    this.easyReadingShowReplyText = false;
-    this.easyReadingShowPushInitText = false;
+  } else if (!this.acceptEasyReadingText()) {
     this.startedEasyReading = false;
   }
   if (this.startedEasyReading) {
@@ -82,35 +88,32 @@ EasyReading.prototype._onChanged = function(e) {
             this.sendCommandAfterUpdate = '\x1b[6~';
           }
         }
-      } else if (!this.easyReadingShowPushInitText) { // only if not showing last row text
-        this._termBuf.pageState = 5;
-        this.startedEasyReading = false;
-      }
-    } else if (this._termBuf.cur_y == lastRowNum) {
-      if (!this.easyReadingShowPushInitText) {
-        var lastRowText = this._termBuf.getRowText(lastRowNum, 0, this._termBuf.cols);
-        var result = parsePushInitText(lastRowText);
-        if (result) {
-          this.easyReadingShowPushInitText = true;
-        } else {
-          this.easyReadingShowPushInitText = false;
-          return;
-        }
-      }
-    } else if (this._termBuf.cur_y == 22) {
-      var secondToLastRowText = this._termBuf.getRowText(22, 0, this._termBuf.cols);
-      var result = parseReplyText(secondToLastRowText);
-      if (result) {
-        this.easyReadingShowReplyText = true;
-      } else {
-        this.easyReadingShowReplyText = false;
         return;
       }
-    } else {
-      // last line hasn't changed
+      if (!this.easyReadingShowPushInitText) { // only if not showing last row text
+        this._termBuf.pageState = 5;
+        this.reset();
+      }
       return;
+    } else if (this._termBuf.cur_y >= lastRowNum - 1) {
+      var curChanged = (this.lastCurY == -1 || this._termBuf.cur_y == this.lastCurY) &&
+        this._termBuf.cur_x >= this.lastCurX;
+      if (this.parseEasyReadingText(parsePushInitText)) {
+        this.easyReadingShowPushInitText = true;
+        return;
+      }
+      if (this.parseEasyReadingText(parseReplyText)) {
+        this.easyReadingShowReplyText = true;
+        return;
+      }
+      if (!curChanged) {
+        // assume that the last line hasn't changed
+        return;
+      }
     }
   }
+  // exit easy reading in other cases
+  this.reset();
 };
 
 EasyReading.prototype._onViewUpdated = function(e) {
@@ -122,6 +125,25 @@ EasyReading.prototype._onViewUpdated = function(e) {
     }
     this.sendCommandAfterUpdate = '';
   }
+};
+
+// dealing with page state jump to 0 because last row wasn't updated fully
+EasyReading.prototype.acceptEasyReadingText = function() {
+  let lastRowNum = this._termBuf.rows - 1;
+  return this._termBuf.pageState == 0 &&
+    this._termBuf.cur_y >= lastRowNum - 1;
+};
+
+EasyReading.prototype.parseEasyReadingText = function(parser) {
+  let lastRowNum = this._termBuf.rows - 1;
+  var lastRowText = this._termBuf.getRowText(lastRowNum, 0, this._termBuf.cols);
+  var secondToLastRowText = this._termBuf.getRowText(lastRowNum, 0, this._termBuf.cols);
+  var result = parser(lastRowText) || parser(secondToLastRowText);
+  if (result) {
+    this.lastCurY = this._termBuf.cur_y;
+    this.lastCurX = this._termBuf.cur_x;
+  }
+  return result;
 };
 
 EasyReading.prototype.leaveCurrentPost = function() {

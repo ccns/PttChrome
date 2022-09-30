@@ -335,23 +335,17 @@ App.prototype.onToggleLiveHelperModalState = noop;
 // FIXME: Injected when enabled. See: src/components/ContextMenu/index.js
 App.prototype.onDisableLiveHelperModalState = noop;
 
-App.prototype.switchToEasyReadingMode = function(doSwitch) {
-  this.easyReading.leaveCurrentPost();
-  if (doSwitch) {
+App.prototype.switchEasyReadingMode = function() {
+  if (this.buf.pageState == 3) {
+    this.easyReading.leaveCurrentPost();
     this.onDisableLiveHelperModalState();
-    // clear the deep cloned copy of lines
-    this.buf.pageLines = [];
-    if (this.buf.pageState == 3) this.view.conn.send('\x1b[D\x1b[C'); //this.view.conn.send('qr');
-  } else {
-    this.view.mainContainer.style.paddingBottom = '';
-    this.view.lastRowIndex = 22;
-    this.view.lastRowDiv.style.display = '';
-    this.view.replyRowDiv.style.display = '';
-    // clear the deep cloned copy of lines
-    this.buf.pageLines = [];
+    // ensure that the easy reading UI is closed
+    this.view.hideEasyReading();
+    // re-enter article for easy reading loading and for convenience
+    // ensure that easyReading can detect the entering
+    this.view.conn.send('\x1b[D'); // 'q'
+    this.easyReading.sendCommandAfterUpdate = '\x1b[C'; // 'r'
   }
-  // request the full screen
-  this.view.conn.send(unescapeStr('^L'));
 };
 
 App.prototype.doCopy = function(str) {
@@ -854,6 +848,9 @@ App.prototype.onPrefChange = function(name, value) {
       } else {
         this.view.useEasyReadingMode = false;
       }*/
+      if (value != this.view.useEasyReadingMode) {
+        this.switchEasyReadingMode();
+      }
       break;
     case 'antiIdleTime':
       this.antiIdleTime = value * 1000;

@@ -149,6 +149,15 @@ TermChar.prototype = {
     this.underLine = attr.underLine;
   },
 
+  copyExAttr: function(attr) {
+    this.startOfURL = attr.startOfURL;
+    this.endOfURL = attr.endOfURL;
+    this.partOfURL = attr.partOfURL;
+    this.partOfKeyWord = attr.partOfKeyWord;
+    this.keyWordColor = attr.keyWordColor;
+    this.fullurl = attr.fullurl;
+  },
+
   resetAttr: function() {
     this.fg = 7;
     this.bg = 0;
@@ -819,6 +828,21 @@ TermBuf.prototype = {
 
       document.body.classList.toggle('blink--active')
     }
+  },
+
+  // copy term rows, preserving prototype
+  getRowsCopy: function(rowStart, rowEnd, lines) {
+    if (!lines) {
+      lines = this.lines;
+    }
+    return lines.slice(rowStart, rowEnd).map((chars, row) =>
+      chars.map((ch, col) => {
+        var res = new TermChar(ch.ch);
+        res.copyAttr(ch);
+        res.copyExAttr(ch);
+        return res;
+      })
+    );
   },
 
   getText: function(row, colStart, colEnd, color, isutf8, reset, lines) {

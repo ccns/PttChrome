@@ -54,6 +54,7 @@ export function TermView() {
   // React
   this.componentScreen = {
     setCurrentHighlighted() {},
+    setEasyReadingLines() {}
   };
 
   this.selection = null;
@@ -90,8 +91,7 @@ export function TermView() {
 
   var lastRowDiv = document.createElement('div');
   lastRowDiv.setAttribute('id', 'easyReadingLastRow');
-  let spaces = ' '.repeat(80-25);  // TODO: Find a way to update this.
-  this.lastRowDivContent = '<span align="left"><span class="q0 b7">' + spaces + '</span><span class="q1 b7">(y)</span><span class="q0 b7">回應</span><span class="q1 b7">(X%)</span><span class="q0 b7">推文</span><span class="q1 b7">(←)</span><span class="q0 b7">離開 </span> </span>';
+  this.lastRowDivContent = '<span class="b7" align="right"><span class="q1 b7">(y)</span><span class="q0 b7">回應</span><span class="q1 b7">(X%)</span><span class="q0 b7">推文</span><span class="q1 b7">(←)</span><span class="q0 b7">離開 </span></span>';
   lastRowDiv.innerHTML = this.lastRowDivContent;
   this.lastRowDiv = lastRowDiv;
   this.BBSWin.appendChild(lastRowDiv);
@@ -281,20 +281,24 @@ TermView.prototype = {
           this.populateEasyReadingPage();
         }
       } else {
-        this.componentScreen = renderScreen(
-          /* For Screen#componentWillReceiveProps */lines.slice(),
-          this.chh,
-          /* showsLinkPreview */false,
-          this.enablePicPreview,
-          this.mainDisplay
-        )
-        this.setHighlightedRow(this.buf.nowHighlight)
+        this.updateScreen();
       }
       this.buf.prevPageState = this.buf.pageState;
     }
     //var time = new Date().getTime() - start;
     //console.log(time);
 
+  },
+
+  updateScreen: function() {
+    renderScreen(
+      this.buf.lines.slice(),
+      this.chh,
+      false,
+      this.enablePicPreview,
+      this.mainDisplay
+    );
+    this.setHighlightedRow(this.buf.nowHighlight);
   },
 
   setHighlightedRow: function(row) {
@@ -754,9 +758,15 @@ TermView.prototype = {
     if (this.buf.pageState == 3) {
       // handle layout changes
       if (this.buf.prevPageState != 3) {
-        // initialize easy reading UI
+        // initialize easy reader UI
         this.mainContainer.style.paddingBottom = '1em';
-        this.clearRows();
+        this.componentScreen = renderScreen(
+          [], // placeholder lines
+          this.chh,
+          true,
+          false,
+          this.mainDisplay
+        );
         this.lastRowDiv.innerHTML = this.lastRowDivContent;
         this.lastRowDiv.style.display = 'block';
       }
@@ -764,11 +774,10 @@ TermView.prototype = {
       var lastRowText = this.buf.getRowText(this.buf.rows-1, 0, this.buf.cols);
       var result = parseStatusRow(lastRowText);
       if (this.actualRowIndex == 0 || result) {
-        // find new rows from the screen buffer
         var beginIndex = 0;
         if (this.actualRowIndex != 0 && result) {
-          // skip already loaded rows from rowIndexStart to actualRowIndex
-          // in case the line starting at rowIndexStart were truncated or the last page is reached
+          // find num of rows from rowIndexStart to actualRowIndex
+          // in case wrapped rowIndexStart were truncated or the last page is reached
           var numRows = 0;
           for (var i = result.rowIndexStart; i <= this.actualRowIndex; ++i) {
             numRows += this.buf.pageWrappedLines[i];
@@ -776,12 +785,6 @@ TermView.prototype = {
           beginIndex = numRows;
         }
 
-        // find wrapped rows of each displayed line
-        // FIXME: This only works for `\`-autowrapped texts,
-        // which requires enabling both the following pmore options:
-        // "斷行方式: 自動斷行" ("Text Overflow Handling: Auto Wrapping")
-        // and "斷行符號: 顯示" ("Text Overflow Marks: Displayed")
-        // FIXME: Very long lines which do not fit into the screen are not handled.
         var endIndex = -1;
         for (var i = beginIndex; i < this.buf.rows - 1; ++i) {
           if (i > 0 && this.buf.isTextWrappedRow(i-1)) {
@@ -798,10 +801,7 @@ TermView.prototype = {
 
         // row index start with 4 or below will cause duplicated first row of next page
         // 2015-07-04: better way is to view the row 3 and row 4 as one wrapped line
-
-        // check whether the assumed line "No.5" is a wrapped row of line No.4,
-        // which happens when the article header presents and the following pmore option is enabled:
-        // "文章標頭分隔線: 傳統分隔線加空行" ("Article Header Ruler: Traditional Ruler Followed by an Empty Line")
+        // check whether the assumed line "No.5" is a wrapped row of line No.4
         if ((result && result.rowIndexStart <= 4 && result.rowIndexEnd > 4) &&
             result.rowIndexEnd - result.rowIndexStart + 1 < this.actualRowIndex) {
           this.buf.pageWrappedLines = [].concat(
@@ -812,11 +812,10 @@ TermView.prototype = {
           --this.actualRowIndex;
         }
 
-        // load the new rows onto the easy reading screen
-        var lines = this.buf.lines.slice(beginIndex, endIndex);
-        this.appendRows(lines, true);
         // clone rows for selection (getRowText and get ansi color)
-        this.buf.pageLines = this.buf.pageLines.concat(JSON.parse(JSON.stringify(lines)));
+        this.buf.pageLines = this.buf.pageLines.concat(this.buf.getRowsCopy(beginIndex, endIndex));
+        // and for easy reading
+        this.setEasyReadingLines(this.buf.pageLines);
       }
       this.buf.prevPageState = 3;
     } else {
@@ -825,53 +824,47 @@ TermView.prototype = {
     }
   },
 
-  clearRows: function() {
-    this.mainContainer.innerHTML = '';
-  },
-
-  appendRows: function(lines, showsLinkPreview) {
-    for (var i in lines) {
-      var line = lines[i];
-      var el = document.createElement('span');
-      el.setAttribute('type', 'bbsrow');
-      el.setAttribute('srow', this.mainContainer.childNodes.length);
-      this.mainContainer.appendChild(el);
-      renderRowHtml(
-        line, this.mainContainer.childNodes.length, this.chh,
-        showsLinkPreview, el);
-    }
+  setEasyReadingLines: function(rows) {
+    this.componentScreen.setEasyReadingLines(rows);
   },
 
   renderSingleRow: function(target, row) {
-    var el = document.createElement('span');
-    el.setAttribute('type', 'bbsrow');
-    el.setAttribute('srow', '0');
-    target.appendChild(el);
-    return renderRowHtml(row, 0, this.chh, false, el);
+    return renderRowHtml(row, 0, this.chh, false, target);
   },
 
   hideEasyReading: function() {
+    this.mainContainer.style.paddingBottom = '';
     this.lastRowDiv.style.display = '';
     this.replyRowDiv.style.display = '';
-    // clear the deep cloned copy of lines
+    // clear the cloned rows
     this.buf.pageLines = [];
-    this.clearRows();
-    this.appendRows(this.buf.lines, false);
+    this.setEasyReadingLines(undefined);
+    // restore the normal screen
+    this.updateScreen();
+    // exit easy reading mode
+    this.prevPageState = 0;
+    this.useEasyReadingMode = false;
+    this.bbscore.easyReading.reset();
   },
 
   updateEasyReadingReplyRow: function(row) {
-    var el = document.createElement('span');
-    el.style = "background-color:black;";
+    var par = this.replyRowDiv.childNodes[0];
+    par.style = "background-color:black";
+    var el = document.createElement('div');
     this.renderSingleRow(el, row);
-    this.setSingleChild(this.replyRowDiv.childNodes[0], el);
+    this.setSingleChild(par, el);
     this.replyRowDiv.style.display = 'block';
   },
 
   updateEasyReadingPushInitRow: function(row) {
-    var el = document.createElement('span');
-    el.style = "background-color:black;";
+    var par = this.lastRowDiv.childNodes[0];
+    par.style = "background-color:black";
+    var el = document.createElement('div');
     this.renderSingleRow(el, row);
-    this.setSingleChild(this.lastRowDiv.childNodes[0], el);
+    this.setSingleChild(par, el);
+    // update parent styling
+    par.classList.remove('b7');
+    par.setAttribute('align', 'left');
   },
 
   setSingleChild: function(par, child) {
