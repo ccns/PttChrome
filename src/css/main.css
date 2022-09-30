@@ -117,7 +117,9 @@ a:link,a:visited,a:active,a:hover {
 }
 
 #easyReadingLastRow, #easyReadingReplyRow {
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  padding-right: 0.5ch;
   display: none;
   overflow: hidden;
   -webkit-user-select: none;
@@ -126,12 +128,8 @@ a:link,a:visited,a:active,a:hover {
   background-color: transparent;
 }
 
-#easyReadingLastRow {
-  margin-top: -1em;
-}
-
 #easyReadingReplyRow {
-  margin-top: -2em;
+  bottom: 1em;
 }
 
 #fbSharing {

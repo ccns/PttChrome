@@ -36,7 +36,6 @@ const onPrefSaveImpl = (pttchrome, values) => {
   pttchrome.onValuesPrefChange(values);
   pttchrome.modalShown = false;
   pttchrome.setInputAreaFocus();
-  pttchrome.switchToEasyReadingMode(pttchrome.view.useEasyReadingMode);
 
   return {
     showsSettings: false
@@ -225,7 +224,7 @@ const enhance = compose(
       if (nextState.enabled) {
         // cancel easy reading mode first
         pttchrome.view.useEasyReadingMode = false;
-        pttchrome.switchToEasyReadingMode();
+        pttchrome.switchEasyReadingMode();
         pttchrome.setAutoPushthreadUpdate(nextState.sec);
       } else {
         pttchrome.setAutoPushthreadUpdate(-1);

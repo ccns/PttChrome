@@ -10,9 +10,17 @@ export class Screen extends React.Component {
     this.setState({ currentHighlighted });
   };
 
+  setEasyReadingLines = lines => {
+    this.setState({
+      easyReadingLines: lines,
+      currentImagePreview: undefined
+    });
+  };
+
   state = {
     currentHighlighted: undefined,
     currentImagePreview: undefined,
+    easyReadingLines: undefined,
     left: undefined,
     top: undefined
   };
@@ -49,18 +57,19 @@ export class Screen extends React.Component {
   render() {
     return (
       <div id="mainContainer" onMouseMove={this.handleMouseMove}>
-        {this.props.lines.map((chars, row) => (
-          <Row
-            key={row}
-            chars={chars}
-            row={row}
-            forceWidth={this.props.forceWidth}
-            enableLinkInlinePreview={this.props.enableLinkInlinePreview}
-            highlighted={this.state.currentHighlighted === row}
-            onHyperLinkMouseOver={this.handleHyperLinkMouseOver}
-            onHyperLinkMouseOut={this.handleHyperLinkMouseOut}
-          />
-        ))}
+        {(this.state.easyReadingLines || this.props.lines)
+          .map((chars, row) => (
+            <Row
+              key={row}
+              chars={chars}
+              row={row}
+              forceWidth={this.props.forceWidth}
+              enableLinkInlinePreview={this.props.enableLinkInlinePreview}
+              highlighted={this.state.currentHighlighted === row}
+              onHyperLinkMouseOver={this.handleHyperLinkMouseOver}
+              onHyperLinkMouseOut={this.handleHyperLinkMouseOut}
+            />
+          ))}
         {this.state.currentImagePreview && (
           <ImagePreviewer
             request={this.state.currentImagePreview}
