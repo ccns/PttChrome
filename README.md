@@ -12,7 +12,7 @@ Future developments will be done on the branch [`main-ccns.2021`](https://github
 
 A Telnet-over-WebSocket client, forked from [robertabcd/PttChrome](https://github.com/robertabcd/PttChrome).
 
-To quickly grasp the idea of how to customize the behavior, see [.github/workflows/deploy-ghpage.yml](https://github.com/ccns/PttChrome/blob/dev-update/.github/workflows/deploy-ghpage.yml).
+To quickly grasp the idea of how to customize the behavior, see [.github/workflows/deploy-ghpage.yml](.github/workflows/deploy-ghpage.yml).
 
 This workflow sets up the configuration before building PttChrome. The client built with this configuration connects to DreamBBS ([ccns.cc](https://term.ccns.cc)) by default and uses the icon set provided by CCNS.
 
