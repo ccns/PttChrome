@@ -24,10 +24,10 @@ jobs:
           PTTCHROME_PAGE_TITLE: "夢之大地"
           DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
           ALLOW_SITE_IN_QUERY: "yes"
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
           DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
           DEV_PROXY_HEADER: 'https://term.ccns.cc'
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
