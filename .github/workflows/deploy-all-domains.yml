@@ -1,7 +1,7 @@
 name: Deploy to All Domains
 on:
   push:
-    branches: main-ccns.2021
+    branches: SERvGear-X
   schedule:
     - cron: "15 21 * * Wed,Sun"
 jobs:

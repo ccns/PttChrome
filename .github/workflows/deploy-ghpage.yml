@@ -33,7 +33,7 @@ jobs:
         env:
           CNAME: ${{ inputs.CNAME }}
           PTTCHROME_THEME: 'ccns'
-          PTTCHROME_PAGE_TITLE: PttChrome-CCNS
+          PTTCHROME_PAGE_TITLE: 'SERvGear-X'
           DEFAULT_SITE: ${{ inputs.DEFAULT_SITE }}
           ALLOW_SITE_IN_QUERY: "yes"
           DEV_PROXY_TARGET: ${{ inputs.DEV_PROXY_TARGET }}
