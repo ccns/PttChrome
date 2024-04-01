@@ -1,7 +1,7 @@
 name: Build and Deploy
 on:
   push:
-    branches: main-ccns.2021
+    branches: NERvGear-X
   schedule:
     - cron: "15 21 * * Wed,Sun"
 jobs:
@@ -23,7 +23,7 @@ jobs:
         env:
           CNAME: 'term.ccns.cc'
           PTTCHROME_THEME: 'ccns'
-          PTTCHROME_PAGE_TITLE: "夢之大地"
+          PTTCHROME_PAGE_TITLE: 'NERvGear-X'
           DEFAULT_SITE: 'wsstelnet://ws.ccns.cc/bbs'
           ALLOW_SITE_IN_QUERY: "yes"
           DEV_PROXY_TARGET: 'https://ws.ccns.cc'
@@ -47,7 +47,7 @@ jobs:
         env:
           CNAME: 'term.ccns.ncku.edu.tw'
           PTTCHROME_THEME: 'ccns'
-          PTTCHROME_PAGE_TITLE: "夢之大地"
+          PTTCHROME_PAGE_TITLE: 'NERvGear-X'
           DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
           ALLOW_SITE_IN_QUERY: "yes"
           DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
