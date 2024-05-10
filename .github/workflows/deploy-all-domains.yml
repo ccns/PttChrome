@@ -15,8 +15,8 @@ jobs:
               DEFAULT_SITE: 'wsstelnet://ws.ccns.cc/bbs'
               DEV_PROXY_TARGET: 'https://ws.ccns.cc'
               DEV_PROXY_HEADER: 'https://term.ccns.cc'
-            secrets:
-              deploy-token: ${{ secrets.GITHUB_TOKEN }}
+            secrets-id:
+              deploy-token: GITHUB_TOKEN
           - inputs:
               CNAME: 'term.ccns.ncku.edu.tw'
               DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
@@ -24,9 +24,9 @@ jobs:
               DEV_PROXY_HEADER: 'https://term.ccns.ncku.edu.tw'
               deploy-repository-name: '${{ github.repository_owner }}/term.ccns.ncku.edu.tw'
               deploy-branch: main
-            secrets:
-              deploy-token: ${{ secrets.PTTCHROME_TOKEN }}
+            secrets-id:
+              deploy-token: PTTCHROME_TOKEN
     uses: ./.github/workflows/deploy-ghpage.yml
     with: ${{ matrix.inputs }}
     secrets:
-      deploy-token: ${{ matrix.secrets.deploy-token }}
+      deploy-token: ${{ secrets[matrix.secrets-id.deploy-token] }}
