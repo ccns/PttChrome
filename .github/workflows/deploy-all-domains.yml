@@ -27,6 +27,12 @@ jobs:
             secrets-id:
               deploy-token: PTTCHROME_TOKEN
     uses: ./.github/workflows/deploy-ghpage.yml
-    with: ${{ matrix.inputs }}
+    with:
+      CNAME: ${{ matrix.CNAME }}
+      DEFAULT_SITE: ${{ matrix.DEFAULT_SITE }}
+      DEV_PROXY_TARGET: ${{ matrix.DEV_PROXY_TARGET }}
+      DEV_PROXY_HEADER: ${{ matrix.DEV_PROXY_HEADER }}
+      deploy-repository-name: ${{ matrix.deploy-repository-name }}
+      deploy-branch: ${{ matrix.deploy-branch }}
     secrets:
       deploy-token: ${{ secrets[matrix.secrets-id.deploy-token] }}
