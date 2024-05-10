@@ -1,9 +1,21 @@
 name: Build and Deploy
 on:
-  push:
-    branches: main-ccns.2021
-  schedule:
-    - cron: "15 21 * * Wed,Sun"
+  workflow_call:
+    inputs:
+      CNAME: { required: true, type: string }
+      DEFAULT_SITE: { required: true, type: string }
+      DEV_PROXY_TARGET: { required: true, type: string }
+      DEV_PROXY_HEADER: { required: true, type: string }
+      deploy-repository-name:
+        default: '${{ github.repository_owner }}/${{ github.repository }}'
+        required: false
+        type: string
+      deploy-branch:
+        default: gh-pages
+        required: false
+        type: string
+    secrets:
+      deploy-token: { required: true }
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -19,44 +31,21 @@ jobs:
               yarn build
               echo "$CNAME" > dist/CNAME
         env:
-          CNAME: 'term.ccns.cc'
+          CNAME: ${{ inputs.CNAME }}
           PTTCHROME_THEME: 'ccns'
-          PTTCHROME_PAGE_TITLE: "夢之大地"
-          DEFAULT_SITE: 'wsstelnet://ws.ccns.cc/bbs'
+          PTTCHROME_PAGE_TITLE: PttChrome-CCNS
+          DEFAULT_SITE: ${{ inputs.DEFAULT_SITE }}
           ALLOW_SITE_IN_QUERY: "yes"
-          DEV_PROXY_TARGET: 'https://ws.ccns.cc'
-          DEV_PROXY_HEADER: 'https://term.ccns.cc'
+          DEV_PROXY_TARGET: ${{ inputs.DEV_PROXY_TARGET }}
+          DEV_PROXY_HEADER: ${{ inputs.DEV_PROXY_HEADER }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           NODE_OPTIONS: '--openssl-legacy-provider'
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: dist # The folder the action should deploy.
-          CLEAN: true # Automatically remove deleted files from the deploy branch
-      - name: Rebuild for term.ccns.ncku.edu.tw
-        run: |
-              rm -vrf dist
-              yarn
-              yarn build
-              echo "$CNAME" > dist/CNAME
-        env:
-          CNAME: 'term.ccns.ncku.edu.tw'
-          PTTCHROME_THEME: 'ccns'
-          PTTCHROME_PAGE_TITLE: "PttChrome-CCNS"
-          DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
-          ALLOW_SITE_IN_QUERY: "yes"
-          DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
-          DEV_PROXY_HEADER: 'https://term.ccns.ncku.edu.tw'
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY: 'term.ccns.ncku.edu.tw'
-          NODE_OPTIONS: '--openssl-legacy-provider'
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          token: ${{ secrets.PTTCHROME_TOKEN }}
-          repository-name: '${{ github.repository_owner }}/term.ccns.ncku.edu.tw'
-          branch: main # The branch the action should deploy to.
+          token: ${{ secrets.deploy-token }}
+          repository-name: ${{ inputs.deploy-repository-name }}
+          branch: ${{ inputs.deploy-branch }} # The branch the action should deploy to.
           folder: dist # The folder the action should deploy.
           clean: true # Automatically remove deleted files from the deploy branch

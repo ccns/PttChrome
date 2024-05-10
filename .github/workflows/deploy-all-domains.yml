@@ -1,0 +1,30 @@
+name: Deploy to All Domains
+on:
+  push:
+    branches: main-ccns.2021
+  schedule:
+    - cron: "15 21 * * Wed,Sun"
+jobs:
+  strategy:
+    fail-fast: false
+    matrix:
+      include:
+        - inputs:
+            CNAME: 'term.ccns.cc'
+            DEFAULT_SITE: 'wsstelnet://ws.ccns.cc/bbs'
+            DEV_PROXY_TARGET: 'https://ws.ccns.cc'
+            DEV_PROXY_HEADER: 'https://term.ccns.cc'
+          secrets:
+            deploy-token: ${{ secrets.GITHUB_TOKEN }}
+        - inputs:
+            CNAME: 'term.ccns.ncku.edu.tw'
+            DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
+            DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
+            DEV_PROXY_HEADER: 'https://term.ccns.ncku.edu.tw'
+            deploy-repository-name: '${{ github.repository_owner }}/term.ccns.ncku.edu.tw'
+            deploy-branch: main
+          secrets:
+            deploy-token: ${{ secrets.PTTCHROME_TOKEN }}
+    uses: ./.github/workflows/deploy-ghpage.yml
+    with: ${{ matrix.inputs }}
+    secrets: ${{ matrix.secrets }}
