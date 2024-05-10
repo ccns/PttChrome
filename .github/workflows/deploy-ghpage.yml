@@ -47,7 +47,7 @@ jobs:
         env:
           CNAME: 'term.ccns.ncku.edu.tw'
           PTTCHROME_THEME: 'ccns'
-          PTTCHROME_PAGE_TITLE: "夢之大地"
+          PTTCHROME_PAGE_TITLE: "PttChrome-CCNS"
           DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
           ALLOW_SITE_IN_QUERY: "yes"
           DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
