@@ -27,4 +27,5 @@ jobs:
             deploy-token: ${{ secrets.PTTCHROME_TOKEN }}
     uses: ./.github/workflows/deploy-ghpage.yml
     with: ${{ matrix.inputs }}
-    secrets: ${{ matrix.secrets }}
+    secrets:
+      deploy-token: ${{ matrix.secrets.deploy-token }}
