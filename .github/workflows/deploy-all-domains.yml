@@ -6,6 +6,7 @@ on:
     - cron: "15 21 * * Wed,Sun"
 jobs:
   deploy-all:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -26,7 +27,8 @@ jobs:
               deploy-branch: main
             secrets-id:
               deploy-token: PTTCHROME_TOKEN
-    uses: ./.github/workflows/deploy-ghpage.yml
-    with: ${{ matrix.inputs }}
-    secrets:
-      deploy-token: ${{ secrets[matrix.secrets-id.deploy-token] }}
+    steps:
+      - uses: ./.github/workflows/deploy-ghpage.yml
+        with: ${{ matrix.inputs }}
+        secrets:
+          deploy-token: ${{ secrets[matrix.secrets-id.deploy-token] }}
