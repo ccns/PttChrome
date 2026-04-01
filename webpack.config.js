@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const WebpackCdnPlugin = require('webpack-cdn-plugin');
 const AliasPlugin = require('enhanced-resolve/lib/AliasPlugin');
+const Dotenv = require('dotenv-webpack');
 
 const DEVELOPER_MODE = process.env.NODE_ENV === 'development'
 const PRODUCTION_MODE = process.env.NODE_ENV !== 'development'
@@ -71,6 +72,7 @@ module.exports = {
     minimizer: [new OptimizeCSSAssetsPlugin({})],
   },
   plugins: [
+    new Dotenv(),
     new webpack.DefinePlugin({
       'process.env.PTTCHROME_PAGE_TITLE': JSON.stringify(process.env.PTTCHROME_PAGE_TITLE || 'PttChrome'),
       'process.env.DEFAULT_SITE': JSON.stringify(PRODUCTION_MODE ? process.env.DEFAULT_SITE || 'wsstelnet://ws.ptt.cc/bbs' : 'wstelnet://localhost:8080/bbs'),
