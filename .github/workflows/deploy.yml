@@ -14,6 +14,7 @@ jobs:
           - site:
               CNAME: 'term.ccns.cc'
               TARGET_REPO: '${{ github.repository }}'
+              THEME: 'ccns'
               PAGE_TITLE: 'PttChrome-CCNS'
               DEFAULT_SITE: 'wsstelnet://ws.ccns.cc/bbs'
               DEV_PROXY_TARGET: 'https://ws.ccns.cc'
@@ -21,6 +22,7 @@ jobs:
           - site:
               CNAME: 'term.ccns.ncku.edu.tw'
               TARGET_REPO: '${{ github.repository_owner }}/term.ccns.ncku.edu.tw'
+              THEME: 'ccns'
               PAGE_TITLE: 'PttChrome-CCNS'
               DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
               DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
@@ -30,6 +32,7 @@ jobs:
               deploy-token: PTTCHROME_TOKEN
     uses: ./.github/workflows/deploy-ghpage.yml
     with:
+      THEME: ${{ matrix.site.THEME }}
       TARGET_REPO: ${{ matrix.site.TARGET_REPO }}
       CNAME: ${{ matrix.site.CNAME }}
       PAGE_TITLE: ${{ matrix.site.PAGE_TITLE }}
