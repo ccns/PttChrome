@@ -3,11 +3,12 @@
 [![build and deploy status](https://github.com/ccns/PttChrome/actions/workflows/deploy-ghpage.yml/badge.svg)](https://github.com/ccns/PttChrome/actions/workflows/deploy-ghpage.yml)
 
 An HTML5-based Telnet-over-WebSocket client to connect to ANSI-terminal–based BBS sites.
-This is the source of the web page hosted on [term.ccns.cc](https://term.ccns.cc/).
+This repository contains the source code running behind
+[term.ccns.cc](https://term.ccns.cc/).
 
 ## How to Set up the Auto Build
 
-To quickly grasp the idea of how to customize the behavior, see [.github/workflows/deploy-ghpage.yml](.github/workflows/deploy-ghpage.yml).
+To customize the behavior, see [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
 This workflow sets up the configuration before building PttChrome. The client built with this configuration connects to DreamBBS ([ccns.cc](https://term.ccns.cc)) by default and uses the icon set provided by CCNS.
 
@@ -15,23 +16,57 @@ Without such configuration, the built client will instead connect to Ptt ([ptt.c
 
 ## History
 
-PttChrome-CCNS is forked from
-[robertabcd/PttChrome](https://github.com/robertabcd/PttChrome), which was
-derived from [iamchucky/PttChrome](https://github.com/iamchucky/PttChrome).
+PttChrome-CCNS is forked from [robertabcd/PttChrome](https://github.com/robertabcd/PttChrome),
+which was originally forked from [iamchucky/PttChrome](https://github.com/iamchucky/PttChrome).
 
-PttChrome-CCNS now also ports patches from [ptt/ptt-term](https://github.com/ptt/ptt-term/).
+PttChrome-CCNS now also incorporates upstream patches from [ptt/ptt-term](https://github.com/ptt/ptt-term/).
 
-The original `PttChrome` was a pure Chrome extension.  `robertabcd` added
-websocket and ported it to be a pure HTML5 website that does not depend on
-Chrome anymore and that became the code running behind `term.ptt.cc` until 2026.
+The original `PttChrome` was a Chrome browser extension. `robertabcd` added WebSocket support and
+ported it to a standalone HTML5 web application independent of Chrome extension APIs.
+That codebase served `term.ptt.cc` until 2026.
 
-`ptt-term` is the official repo for the `term.ptt.cc` and will collect patches
-from other active PttChrome forks, with its own patches.
+`ptt-term` is the official repository for `term.ptt.cc` and `term.ptt2.cc`.
+It consolidates active patches from various PttChrome forks along
+with its own enhancements and features.
 
 ## How to Contribute
 
 If you want to fix something or add general features, please also consider the upstream:
 + [ptt/ptt-term](https://github.com/ptt/ptt-term)
+
+Because [robertabcd/PttChrome](https://github.com/robertabcd/PttChrome) is no longer maintained,
+`ptt-term` is established as an independent repository rather than a GitHub fork of
+robertabcd's original project.
+
+You are welcome to contribute to `ptt-term` by submitting Pull Requests:
+
+1. **Direct Fork**: Click **Fork** on [ptt/ptt-term](https://github.com/ptt/ptt-term),
+   push your changes to your fork, and submit a Pull Request to `dev`.
+2. **Existing Fork**: If you already have an existing fork of another `PttChrome` repository,
+   you can add `ptt-term` as a new git remote, cherry-pick your commits onto a branch tracking
+   `ptt/ptt-term`, and submit a Pull Request:
+
+```bash
+# Example: Adding ptt-term as a remote to an existing local repo
+git remote add ptt https://github.com/ptt/ptt-term.git
+git fetch ptt
+git checkout -b my-feature ptt/dev
+git cherry-pick <your-commit-hash>
+git push origin my-feature
+```
+
+## Local Development
+
+```bash
+# Install dependencies
+yarn
+
+# Start development server
+yarn start
+
+# Build for production
+yarn build
+```
 
 ## Version Information
 
