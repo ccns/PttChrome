@@ -68,6 +68,6 @@
     "build": "webpack",
     "prestart": "npm run clean",
     "start": "webpack serve --node-env=development",
-    "prepare": "husky install"
+    "prepare": "husky"
   }
 }
