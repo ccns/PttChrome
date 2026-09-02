@@ -3,8 +3,9 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "monthly"
     target-branch: "main-ccns.2021"
-    labels:
-      - "npm"
-      - "dependencies"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
