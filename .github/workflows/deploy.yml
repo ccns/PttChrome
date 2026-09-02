@@ -5,6 +5,9 @@ on:
       - main-ccns.2021
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     strategy:
