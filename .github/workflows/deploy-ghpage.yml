@@ -1,31 +1,39 @@
-name: Build and Deploy
+name: Deploy static site
+
 on:
   workflow_call:
     inputs:
-      CNAME: { required: true, type: string }
-      DEFAULT_SITE: { required: true, type: string }
-      DEV_PROXY_TARGET: { required: true, type: string }
-      DEV_PROXY_HEADER: { required: true, type: string }
-      deploy-repository-name:
-        default: '${{ github.repository_owner }}/${{ github.repository }}'
-        required: false
+      TARGET_REPO:
         type: string
-      deploy-branch:
-        default: gh-pages
-        required: false
+        required: true
+      CNAME:
         type: string
+        required: true
+      DEFAULT_SITE:
+        type: string
+        required: true
+      DEV_PROXY_TARGET:
+        type: string
+        required: true
+      DEV_PROXY_HEADER:
+        type: string
+        required: true
+      BRANCH:
+        type: string
+        required: false
+        default: 'gh-pages'
     secrets:
-      deploy-token: { required: true }
+      deploy-token:
+        required: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@master # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
-        with:
-          persist-credentials: false
+      - name: Checkout
+        uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+      - name: Install and Build
         run: |
               yarn
               yarn build
@@ -39,13 +47,12 @@ jobs:
           DEV_PROXY_TARGET: ${{ inputs.DEV_PROXY_TARGET }}
           DEV_PROXY_HEADER: ${{ inputs.DEV_PROXY_HEADER }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY: ${{ inputs.TARGET_REPO }}
           NODE_OPTIONS: '--openssl-legacy-provider'
-      - name: Deploy 🚀
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
+          folder: dist
+          repository-name: ${{ inputs.TARGET_REPO }}
+          branch: ${{ inputs.BRANCH }}
           token: ${{ secrets.deploy-token }}
-          repository-name: ${{ inputs.deploy-repository-name }}
-          branch: ${{ inputs.deploy-branch }} # The branch the action should deploy to.
-          folder: dist # The folder the action should deploy.
-          clean: true # Automatically remove deleted files from the deploy branch

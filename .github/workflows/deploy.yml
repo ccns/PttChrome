@@ -1,0 +1,38 @@
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches:
+      - main-ccns.2021
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site:
+              CNAME: 'term.ccns.cc'
+              TARGET_REPO: '${{ github.repository }}'
+              DEFAULT_SITE: 'wsstelnet://ws.ccns.cc/bbs'
+              DEV_PROXY_TARGET: 'https://ws.ccns.cc'
+              DEV_PROXY_HEADER: 'https://term.ccns.cc'
+          - site:
+              CNAME: 'term.ccns.ncku.edu.tw'
+              TARGET_REPO: '${{ github.repository_owner }}/term.ccns.ncku.edu.tw'
+              DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
+              DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
+              DEV_PROXY_HEADER: 'https://term.ccns.ncku.edu.tw'
+              BRANCH: main
+            secrets-id:
+              deploy-token: PTTCHROME_TOKEN
+    uses: ./.github/workflows/deploy-ghpage.yml
+    with:
+      TARGET_REPO: ${{ matrix.site.TARGET_REPO }}
+      CNAME: ${{ matrix.site.CNAME }}
+      DEFAULT_SITE: ${{ matrix.site.DEFAULT_SITE }}
+      DEV_PROXY_TARGET: ${{ matrix.site.DEV_PROXY_TARGET }}
+      DEV_PROXY_HEADER: ${{ matrix.site.DEV_PROXY_HEADER }}
+      BRANCH: ${{ matrix.site.BRANCH }}
+    secrets:
+      deploy-token: ${{ secrets[matrix.secrets-id.deploy-token] || secrets.GH_PAT || secrets.GITHUB_TOKEN }}
