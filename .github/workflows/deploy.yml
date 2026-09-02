@@ -13,17 +13,19 @@ jobs:
         include:
           - site:
               CNAME: 'term.ccns.cc'
-              TARGET_REPO: '${{ github.repository }}'
               THEME: 'ccns'
               PAGE_TITLE: 'PttChrome-CCNS'
+              PAGE_DESCRIPTION: '使用虛擬終端機「PttChrome-CCNS」，輸入「ccns.cc」，前往傳說中的夢之大地「Dream-Land BBS」——位於成功大學的 BBS 站臺之一，站內有許多有關成功大學而搜尋引擎搜不到的資訊。'
+              TARGET_REPO: '${{ github.repository }}'
               DEFAULT_SITE: 'wsstelnet://ws.ccns.cc/bbs'
               DEV_PROXY_TARGET: 'https://ws.ccns.cc'
               DEV_PROXY_HEADER: 'https://term.ccns.cc'
           - site:
               CNAME: 'term.ccns.ncku.edu.tw'
-              TARGET_REPO: '${{ github.repository_owner }}/term.ccns.ncku.edu.tw'
               THEME: 'ccns'
               PAGE_TITLE: 'PttChrome-CCNS'
+              PAGE_DESCRIPTION: '使用虛擬終端機「PttChrome-CCNS」，輸入「ccns.cc」，前往傳說中的夢之大地「Dream-Land BBS」——位於成功大學的 BBS 站臺之一，站內有許多有關成功大學而搜尋引擎搜不到的資訊。'
+              TARGET_REPO: '${{ github.repository_owner }}/term.ccns.ncku.edu.tw'
               DEFAULT_SITE: 'wsstelnet://ws.ccns.ncku.edu.tw/bbs'
               DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
               DEV_PROXY_HEADER: 'https://term.ccns.ncku.edu.tw'
@@ -36,6 +38,7 @@ jobs:
       TARGET_REPO: ${{ matrix.site.TARGET_REPO }}
       CNAME: ${{ matrix.site.CNAME }}
       PAGE_TITLE: ${{ matrix.site.PAGE_TITLE }}
+      PAGE_DESCRIPTION: ${{ matrix.site.PAGE_DESCRIPTION }}
       DYNAMIC_TITLE: ${{ matrix.site.DYNAMIC_TITLE }}
       DEFAULT_SITE: ${{ matrix.site.DEFAULT_SITE }}
       DEV_PROXY_TARGET: ${{ matrix.site.DEV_PROXY_TARGET }}
