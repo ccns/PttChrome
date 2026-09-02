@@ -127,11 +127,13 @@ module.exports = {
         {
           name: 'react',
           var: 'React',
+          version: '16.14.0',
           path: `umd/react.${process.env.NODE_ENV}${PRODUCTION_MODE ? '.min' : ''}.js`,
         },
         {
           name: 'react-dom',
           var: 'ReactDOM',
+          version: '16.14.0',
           path: `umd/react-dom.${process.env.NODE_ENV}${PRODUCTION_MODE ? '.min' : ''}.js`,
         },
       ],
@@ -146,8 +148,9 @@ module.exports = {
     devMiddleware: {
       publicPath: '/assets',
     },
-    proxy: {
-      '/bbs': {
+    proxy: [
+      {
+        context: ['/bbs'],
         target: process.env.DEV_PROXY_TARGET || 'https://ws.ptt.cc',
         secure: true,
         ws: true,
@@ -157,6 +160,6 @@ module.exports = {
           proxyReq.setHeader('origin', process.env.DEV_PROXY_HEADER || 'https://term.ptt.cc');
         }
       }
-    }
+    ]
   }
 };

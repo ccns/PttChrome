@@ -3,13 +3,13 @@
   "version": "2.15.0-ccns.2021",
   "dependencies": {
     "base58": "^2.0.1",
-    "bootstrap": "^5.3.8",
+    "bootstrap": "^3.4.1",
     "classnames": "^2.2.5",
     "hammerjs": "^2.0.8",
-    "jquery": "^4.0.0",
-    "react": "^19.2.8",
-    "react-bootstrap": "^2.10.10",
-    "react-dom": "^19.2.8",
+    "jquery": "^3.7.1",
+    "react": "~16.14.0",
+    "react-bootstrap": "^0.33.1",
+    "react-dom": "~16.14.0",
     "react-overlays": "^5.1.1",
     "recompose": "^0.30.0"
   },
@@ -67,7 +67,7 @@
     "prebuild": "npm run clean",
     "build": "webpack",
     "prestart": "npm run clean",
-    "start": "webpack serve --node-env=development",
+    "start": "webpack serve --mode development",
     "prepare": "husky"
   }
 }
