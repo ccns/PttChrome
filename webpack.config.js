@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
@@ -18,9 +19,9 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'dist/assets/'),
-    publicPath: 'assets/',
+    publicPath: '/assets/',
     pathinfo: DEVELOPER_MODE,
-    filename: `[name]${ PRODUCTION_MODE ? '.[chunkhash]' : '' }.js`
+    filename: `[name]${ PRODUCTION_MODE ? '.[contenthash]' : '' }.js`
   },
   module: {
     rules: [
@@ -46,27 +47,19 @@ module.exports = {
         oneOf: [
           {
             resourceQuery: /inline/,
-            use: 'url-loader'
+            type: 'asset/inline',
           },
           {
-            use: [
-              {
-                loader: 'file-loader',
-                options: {
-                  name: '[name].[hash].[ext]',
-                  esModule: false,
-                }
-              }
-            ]
+            type: 'asset/resource',
+            generator: {
+              filename: '[name].[hash][ext]',
+            },
           }
         ]
       }
     ]
   },
   resolve: {
-    fallback: {
-      querystring: false
-    },
     plugins: [new AliasPlugin('described-resolve', [{
       name: 'Icon',
       alias: [
@@ -76,6 +69,10 @@ module.exports = {
     }], 'resolve')]
   },
   devtool: 'source-map',
+  optimization: {
+    // '...' keeps webpack's built-in terser for JS alongside the CSS minimizer.
+    minimizer: ['...', new CssMinimizerPlugin()],
+  },
   plugins: [
     new Dotenv(),
     new webpack.DefinePlugin({
@@ -91,7 +88,7 @@ module.exports = {
       'PTTCHROME.GITHUB_REPOSITORY': JSON.stringify(process.env.GITHUB_REPOSITORY || 'ptt/ptt-term'),
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[chunkhash].css',
+      filename: '[name].[contenthash].css',
       chunkFilename: '[id].css',
     }),
     new HtmlWebpackPlugin({
@@ -146,7 +143,7 @@ module.exports = {
       directory: path.resolve(__dirname, 'dist'),
     },
     devMiddleware: {
-      publicPath: '/assets',
+      publicPath: '/assets/',
     },
     proxy: [
       {
