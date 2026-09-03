@@ -33,8 +33,6 @@ jobs:
               DEV_PROXY_TARGET: 'https://ws.ccns.ncku.edu.tw'
               DEV_PROXY_HEADER: 'https://term.ccns.ncku.edu.tw'
               BRANCH: main
-            secrets-id:
-              deploy-token: PTTCHROME_TOKEN
     uses: ./.github/workflows/deploy-ghpage.yml
     with:
       THEME: ${{ matrix.site.THEME }}
@@ -48,4 +46,4 @@ jobs:
       DEV_PROXY_HEADER: ${{ matrix.site.DEV_PROXY_HEADER }}
       BRANCH: ${{ matrix.site.BRANCH }}
     secrets:
-      deploy-token: ${{ secrets[matrix.secrets-id.deploy-token] || secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+      deploy-token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
