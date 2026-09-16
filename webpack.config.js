@@ -140,6 +140,7 @@ module.exports = (env, argv) => ({
     devMiddleware: {
       publicPath: '/assets/',
     },
+    port: 8080,
     proxy: [
       {
         context: ['/bbs'],
@@ -147,9 +148,11 @@ module.exports = (env, argv) => ({
         secure: true,
         ws: true,
         changeOrigin: true,
-        onProxyReqWs(proxyReq) {
-          // Whitelist does not accept ws.ptt.cc
-          proxyReq.setHeader('origin', process.env.DEV_PROXY_HEADER || 'https://term.ptt.cc');
+        on: {
+            proxyReqWs: ((origin) => (proxyReq, req, socket, options, head) => {
+              // Whitelist does not accept ws.ptt.cc
+              proxyReq.setHeader('origin', origin);
+            })(process.env.DEV_PROXY_HEADER || 'https://term.ptt.cc')
         }
       }
     ]
