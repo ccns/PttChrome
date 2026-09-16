@@ -8,6 +8,8 @@ const WebpackCdnPlugin = require('webpack-cdn-plugin');
 const AliasPlugin = require('enhanced-resolve/lib/AliasPlugin');
 const Dotenv = require('dotenv-webpack');
 
+// for build configs
+require('dotenv').config();
 
 module.exports = (env, argv) => ({
   entry: {
