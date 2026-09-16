@@ -3,7 +3,7 @@
   "version": "2.15.4-ccns.2021",
   "dependencies": {
     "base58": "^2.0.1",
-    "bootstrap": "^3.4.1",
+    "bootstrap": "^5.0.0",
     "classnames": "^2.2.5",
     "hammerjs": "^2.0.8",
     "jquery": "^3.7.1",
