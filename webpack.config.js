@@ -14,8 +14,8 @@ module.exports = (env, argv) => ({
     'pttchrome': './src/entry.js',
   },
   output: {
-    path: path.join(__dirname, 'dist/assets/'),
-    publicPath: '/assets/',
+    path: path.join(__dirname, 'dist'),
+    publicPath: '/',
     filename: `assets/[name]${ env.production ? '.[contenthash]' : '' }.js`
   },
   module: {
@@ -30,9 +30,6 @@ module.exports = (env, argv) => ({
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: '../',
-            },
           },
           'css-loader',
         ],
@@ -47,7 +44,7 @@ module.exports = (env, argv) => ({
           {
             type: 'asset/resource',
             generator: {
-              filename: '[name].[hash][ext]',
+              filename: 'assets/[name].[contenthash][ext]',
             },
           }
         ]
@@ -83,8 +80,8 @@ module.exports = (env, argv) => ({
       'PTTCHROME.GITHUB_REPOSITORY': JSON.stringify(process.env.GITHUB_REPOSITORY || 'ptt/ptt-term'),
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-      chunkFilename: '[id].css',
+      filename: 'assets/[name].[contenthash].css',
+      chunkFilename: 'asseets/[id].css',
     }),
     new HtmlWebpackPlugin({
       alwaysWriteToDisk: !env.production,
@@ -94,7 +91,7 @@ module.exports = (env, argv) => ({
       },
       inject: 'head',
       template: './src/dev.html',
-      filename: '../index.html'
+      filename: './index.html'
     }),
     new WebpackCdnPlugin({
       crossOrigin: 'anonymous',
@@ -136,9 +133,6 @@ module.exports = (env, argv) => ({
   devServer: {
     static: {
       directory: path.resolve(__dirname, 'dist'),
-    },
-    devMiddleware: {
-      publicPath: '/assets/',
     },
     port: 8080,
     proxy: [
