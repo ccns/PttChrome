@@ -8,7 +8,7 @@ function startApp() {
 
   const app = new App();
 
-  (process.env.DEVELOPER_MODE ? import('../components/DeveloperModeAlert')
+  (PTTCHROME.DEVELOPER_MODE ? import('../components/DeveloperModeAlert')
     .then(({DeveloperModeAlert}) => new Promise((resolve, reject) => {
       const container = document.getElementById('reactAlert')
       const onDismiss = () => {
@@ -23,8 +23,8 @@ function startApp() {
   ).then(() => {
     // connect.
     app.connect(
-      process.env.ALLOW_SITE_IN_QUERY && getQueryVariable('site')
-      || process.env.DEFAULT_SITE);
+      PTTCHROME.ALLOW_SITE_IN_QUERY && getQueryVariable('site')
+      || PTTCHROME.DEFAULT_SITE);
     // TODO: Call onSymFont for font data when it's implemented.
     console.log("load pref from storage");
     app.onValuesPrefChange(readValuesWithDefault());

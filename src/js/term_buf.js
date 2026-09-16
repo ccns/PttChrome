@@ -257,10 +257,10 @@ export function TermBuf(cols, rows) {
     //this.keyWordLine[rows]=false;
   }
   this.BBSWin = document.getElementById('BBSWindow');
-  this.titleBase = process.env.PTTCHROME_PAGE_TITLE;
+  this.titleBase = PTTCHROME.PAGE_TITLE;
   this.titleSite = null;
   this.titleConn = null;
-  this.dynamicTitle = (process.env.PTTCHROME_DYNAMIC_TITLE !== false);
+  this.dynamicTitle = (PTTCHROME.DYNAMIC_TITLE !== false);
   document.title = this.title = this.titleBase;
 }
 

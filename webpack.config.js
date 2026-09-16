@@ -70,12 +70,12 @@ module.exports = (env, argv) => ({
   plugins: [
     new Dotenv(),
     new webpack.DefinePlugin({
-      'process.env.PTTCHROME_PAGE_TITLE': JSON.stringify(process.env.PTTCHROME_PAGE_TITLE || 'PttChrome'),
-      'process.env.PTTCHROME_PAGE_DESCRIPTION': JSON.stringify(process.env.PTTCHROME_PAGE_DESCRIPTION || 'A web client for connecting to the ANSI based terminals.'),
-      'process.env.PTTCHROME_DYNAMIC_TITLE': JSON.stringify(process.env.PTTCHROME_DYNAMIC_TITLE !== 'false'),
-      'process.env.DEFAULT_SITE': JSON.stringify(env.production ? process.env.DEFAULT_SITE || 'wsstelnet://ws.ptt.cc/bbs' : 'wstelnet://localhost:8080/bbs'),
-      'process.env.ALLOW_SITE_IN_QUERY': JSON.stringify(process.env.ALLOW_SITE_IN_QUERY === 'yes'),
-      'process.env.DEVELOPER_MODE': JSON.stringify(!env.production),
+      'PTTCHROME.PAGE_TITLE': JSON.stringify(process.env.PTTCHROME_PAGE_TITLE || 'PttChrome'),
+      'PTTCHROME.PAGE_DESCRIPTION': JSON.stringify(process.env.PTTCHROME_PAGE_DESCRIPTION || 'A web client for connecting to the ANSI based terminals.'),
+      'PTTCHROME.DYNAMIC_TITLE': JSON.stringify(process.env.PTTCHROME_DYNAMIC_TITLE !== 'false'),
+      'PTTCHROME.DEFAULT_SITE': JSON.stringify(env.production ? process.env.DEFAULT_SITE || 'wsstelnet://ws.ptt.cc/bbs' : 'wstelnet://localhost:8080/bbs'),
+      'PTTCHROME.ALLOW_SITE_IN_QUERY': JSON.stringify(process.env.ALLOW_SITE_IN_QUERY === 'yes'),
+      'PTTCHROME.DEVELOPER_MODE': JSON.stringify(!env.production),
       'PTTCHROME.NAME': JSON.stringify(process.env.npm_package_name),
       'PTTCHROME.VERSION': JSON.stringify(process.env.npm_package_version),
       'PTTCHROME.GITHUB_REPOSITORY_OWNER': JSON.stringify(process.env.GITHUB_REPOSITORY_OWNER || 'ptt'),

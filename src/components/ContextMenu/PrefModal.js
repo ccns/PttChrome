@@ -592,7 +592,7 @@ export const PrefModal = ({
                   <legend>
                     {i18n("about_version_title")} - {PTTCHROME.NAME} v
                     {PTTCHROME.VERSION}
-                    {process.env.DEVELOPER_MODE
+                    {PTTCHROME.DEVELOPER_MODE
                       ? ` (${i18n("alert_developerModeHeader")})`
                       : ""}
                   </legend>
