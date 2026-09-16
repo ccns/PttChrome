@@ -8,20 +8,15 @@ const WebpackCdnPlugin = require('webpack-cdn-plugin');
 const AliasPlugin = require('enhanced-resolve/lib/AliasPlugin');
 const Dotenv = require('dotenv-webpack');
 
-const DEVELOPER_MODE = process.env.NODE_ENV === 'development'
-const PRODUCTION_MODE = process.env.NODE_ENV !== 'development'
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'production'
-
-module.exports = {
+module.exports = (env, argv) => ({
   entry: {
     'pttchrome': './src/entry.js',
   },
   output: {
     path: path.join(__dirname, 'dist/assets/'),
     publicPath: '/assets/',
-    pathinfo: DEVELOPER_MODE,
-    filename: `[name]${ PRODUCTION_MODE ? '.[contenthash]' : '' }.js`
+    filename: `assets/[name]${ env.production ? '.[contenthash]' : '' }.js`
   },
   module: {
     rules: [
@@ -79,9 +74,9 @@ module.exports = {
       'process.env.PTTCHROME_PAGE_TITLE': JSON.stringify(process.env.PTTCHROME_PAGE_TITLE || 'PttChrome'),
       'process.env.PTTCHROME_PAGE_DESCRIPTION': JSON.stringify(process.env.PTTCHROME_PAGE_DESCRIPTION || 'A web client for connecting to the ANSI based terminals.'),
       'process.env.PTTCHROME_DYNAMIC_TITLE': JSON.stringify(process.env.PTTCHROME_DYNAMIC_TITLE !== 'false'),
-      'process.env.DEFAULT_SITE': JSON.stringify(PRODUCTION_MODE ? process.env.DEFAULT_SITE || 'wsstelnet://ws.ptt.cc/bbs' : 'wstelnet://localhost:8080/bbs'),
+      'process.env.DEFAULT_SITE': JSON.stringify(env.production ? process.env.DEFAULT_SITE || 'wsstelnet://ws.ptt.cc/bbs' : 'wstelnet://localhost:8080/bbs'),
       'process.env.ALLOW_SITE_IN_QUERY': JSON.stringify(process.env.ALLOW_SITE_IN_QUERY === 'yes'),
-      'process.env.DEVELOPER_MODE': JSON.stringify(DEVELOPER_MODE),
+      'process.env.DEVELOPER_MODE': JSON.stringify(!env.production),
       'PTTCHROME.NAME': JSON.stringify(process.env.npm_package_name),
       'PTTCHROME.VERSION': JSON.stringify(process.env.npm_package_version),
       'PTTCHROME.GITHUB_REPOSITORY_OWNER': JSON.stringify(process.env.GITHUB_REPOSITORY_OWNER || 'ptt'),
@@ -92,10 +87,10 @@ module.exports = {
       chunkFilename: '[id].css',
     }),
     new HtmlWebpackPlugin({
-      alwaysWriteToDisk: DEVELOPER_MODE,
+      alwaysWriteToDisk: !env.production,
       minify: {
-        collapseWhitespace: PRODUCTION_MODE,
-        removeComments: PRODUCTION_MODE
+        collapseWhitespace: env.production,
+        removeComments: env.production
       },
       inject: 'head',
       template: './src/dev.html',
@@ -125,17 +120,17 @@ module.exports = {
           name: 'react',
           var: 'React',
           version: '16.14.0',
-          path: `umd/react.${process.env.NODE_ENV}${PRODUCTION_MODE ? '.min' : ''}.js`,
+          path: `umd/react.${env.production ? 'production' : 'development'}${env.production ? '.min' : ''}.js`,
         },
         {
           name: 'react-dom',
           var: 'ReactDOM',
           version: '16.14.0',
-          path: `umd/react-dom.${process.env.NODE_ENV}${PRODUCTION_MODE ? '.min' : ''}.js`,
+          path: `umd/react-dom.${env.production ? 'production' : 'development'}${env.production ? '.min' : ''}.js`,
         },
       ],
     })
-  ].concat(PRODUCTION_MODE ? [] : [
+  ].concat(env.production ? [] : [
     new HtmlWebpackHarddiskPlugin()
   ]),
   devServer: {
@@ -159,4 +154,4 @@ module.exports = {
       }
     ]
   }
-};
+});
