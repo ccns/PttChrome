@@ -1,5 +1,9 @@
 # PttChrome-CCNS
 
+[![Deploy to GitHub Pages](../../actions/workflows/deploy.yml/badge.svg)](../../actions/workflows/deploy.yml)
+[![CodeQL](../../actions/workflows/dynamic/github-code-scanning/codeql/badge.svg)](../../actions/workflows/dynamic/github-code-scanning/codeql)
+[![Dependabot Updates](../../actions/workflows/dynamic/dependabot/dependabot-updates/badge.svg)](../../actions/workflows/dynamic/dependabot/dependabot-updates)
+
 ## Branch Deprecation Note
 
 This branch (`main-ccns.2021`) will be deprecated in favor of a new branch based on the `dev` branch of [ptt/ptt-term](https://github.com/ptt/ptt-term/).
@@ -25,10 +29,6 @@ and then to the head of ptt/ptt-term@dev.
     * `git rebase ptt/dev`
 
 ## Introduction
-
-[![Deploy to GitHub Pages](../../actions/workflows/deploy.yml/badge.svg?branch=dev)](../../actions/workflows/deploy.yml)
-[![CodeQL](../../actions/workflows/dynamic/github-code-scanning/codeql/badge.svg)](../../actions/workflows/dynamic/github-code-scanning/codeql)
-[![Dependabot Updates](../../actions/workflows/dynamic/dependabot/dependabot-updates/badge.svg)](../../actions/workflows/dynamic/dependabot/dependabot-updates)
 
 An HTML5-based Telnet-over-WebSocket client to connect to ANSI-terminal–based BBS sites.
 This repository contains the source code running behind
