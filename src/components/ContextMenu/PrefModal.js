@@ -84,10 +84,15 @@ const normalizeSec = value => {
 const replaceMsg = (msg, replacements) => {
   return msg.split(/#(\S+)#/gi).map((it, index) => {
     if (index % 2 === 1 && it in replacements) {
-      return replacements[it];
-    } else {
-      return it;
+      const replaced = replacements[it];
+      if (replaced) {
+        if (replaced.call) {
+          return replaced(it);
+        }
+        return replaced;
+      }
     }
+    return it;
   });
 };
 
@@ -99,8 +104,8 @@ const replaceI18n = (id, replacements) => {
   return replaceMsg(msg, replacements);
 };
 
-const link = (text, url) => (
-  <a href={url} target="_blank" rel="noreferrer">
+const link = (text, url) => key => (
+  <a href={url} target="_blank" rel="noreferrer" key={key}>
     {text}
   </a>
 );
