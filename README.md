@@ -1,5 +1,31 @@
 # PttChrome-CCNS
 
+## Branch Deprecation Note
+
+This branch (`main-ccns.2021`) will be deprecated in favor of a new branch based on the `dev` branch of [ptt/ptt-term](https://github.com/ptt/ptt-term/).
+
+The `dev` branch of ptt/ptt-term is now the recommended branch for anyone to base their development on.
+
+## Branch Migration Guide
+
+You can try to first migrate to ptt/ptt-term@315fbbd4a901ac9e8ce487dddf901b84ed788fcc
+and then to the head of ptt/ptt-term@dev.
+
+1. add ptt/ptt-term as one of your remote forks
+    * `git remote add ptt https://github.com/ptt/ptt-term.git`
+2. update your remote fork status of ptt/ptt-term
+    * `git fetch ptt`
+3. export the differences of your branch from `dev`
+    * `git format-patch 315fbbd4a901ac9e8ce487dddf901b84ed788fcc^..@`
+4. reset to ptt/ptt-term@315fbbd4a901ac9e8ce487dddf901b84ed788fcc
+    * `git reset 315fbbd4a901ac9e8ce487dddf901b84ed788fcc`
+5. apply exported patches from your branch and fix conflicts
+    * `git am *.patch`
+6. rebase onto the head of `dev` of ptt/ptt-term and fix conflicts
+    * `git rebase ptt/dev`
+
+## Introduction
+
 [![Deploy to GitHub Pages](../../actions/workflows/deploy.yml/badge.svg?branch=dev)](../../actions/workflows/deploy.yml)
 [![CodeQL](../../actions/workflows/dynamic/github-code-scanning/codeql/badge.svg)](../../actions/workflows/dynamic/github-code-scanning/codeql)
 [![Dependabot Updates](../../actions/workflows/dynamic/dependabot/dependabot-updates/badge.svg)](../../actions/workflows/dynamic/dependabot/dependabot-updates)
